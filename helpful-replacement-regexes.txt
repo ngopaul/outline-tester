@@ -1,0 +1,14 @@
+# for cleaning up quotation marks
+[\“\”]
+"
+
+[\’]
+'
+
+# for adding spaces to the left and right of - symbols
+(?<!\s)-(?!\s)
+ -
+
+# for putting {{ }} around words
+(?<=[\n ,";\-\[\.\(])[A-Za-z][A-Za-z']+(?=[\. ,";\-\?\n\]!\):])
+{{$0}}
