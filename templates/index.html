@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    var form_was_submitted = false;
+    // disable input on submission
+    function form_submit() {
+        // Spinner.show();
+        if (form_was_submitted) {
+            document.getElementById("user_input").disabled = true;
+            document.getElementById("user_submit").disabled = true;
+            return false;
+        } else {
+            form_was_submitted = true;
+            return true;
+        }
+    }
+
+    function submit_form_with_data(data) {
+        // Spinner.show();
+        document.getElementById("user_input").value = data;
+        document.getElementById("user_submit").click();
+    }
+
+    // Clear the textarea after form submission
+    if(window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+    // scroll back to where you were after form submission
+    $(document).ready(function () {
+
+        if (localStorage.getItem("ftta-tester-quote-scroll") != null) {
+            $(window).scrollTop(localStorage.getItem("ftta-tester-quote-scroll"));
+        }
+
+    });
+
+    $(window).on("scroll", function() {
+        localStorage.setItem("ftta-tester-quote-scroll", $(window).scrollTop());
+    });
+</script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTTA Memorization Practice</title>
+</head>
+<body>
+<div style="position: fixed; top: 0; left: 0; z-index: 999; width: 100%; height: 40px; padding: 10px">
+    <form action="/" method="post" autocomplete="off" onsubmit="return form_submit()">
+        <span>
+            <input id="user_input" name="user_input" placeholder="Enter response here..." autocorrect="off" autocapitalize="none" autofocus style="width: 50%">
+            <input id="user_submit" type="submit" value="Submit">
+            <script type="text/javascript">
+                'use strict';
+                Spinner();
+                Spinner.show();
+            </script>
+        </span>
+    </form>
+</div>
+<div style="height: 40px"></div>
+<div>
+<!--    style="white-space: pre; font-family: monospace;"-->
+    <pre style="white-space: pre-wrap;">{{ output_text|safe }}</pre>
+</div>
+
+
+</body>
+</html>

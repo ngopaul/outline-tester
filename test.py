@@ -100,9 +100,14 @@ class Occlusion:
         else:
             word_hint_helper = f"({len(self.words_in_answer)})" if len(self.words_in_answer) > 1 else ""
             if self.hint_counter == -1:
-                return '_____' + (word_hint_helper if with_number_of_words else "")
+                num_blanks = len(self.answer)
+                return '_' * num_blanks + (word_hint_helper if with_number_of_words else "")
             else:
-                return '_' + self.hints[self.hint_counter] + '_' + (word_hint_helper if with_number_of_words else "")
+                length_of_hint = len(self.hints[self.hint_counter])
+                num_blanks = (len(self.answer) - length_of_hint)//2
+                num_blanks = max(1, num_blanks)
+                return '_' * num_blanks + self.hints[self.hint_counter] + '_' * num_blanks + (word_hint_helper if with_number_of_words else "")
+                # return '_' + self.hints[self.hint_counter] + '_' + (word_hint_helper if with_number_of_words else "")
 
 
 def serialize_occlusion(occlusion):
@@ -187,6 +192,14 @@ class OccludedOutline:
         self.outline = [x for x in self.outline if x != '']
 
     def set_blanks(self, dropout_rate, smart_dropout=True):
+        """
+        Set the blanks in the outline.
+        TODO change the hardcoded way to avoid the words the, of, to, and, a
+        :param dropout_rate:
+        :param smart_dropout:
+        :return:
+        """
+        avoid_words = ["the", "of", "to", "and", "a"]
         if smart_dropout:
             with open("1000words.txt") as f:
                 words = f.read().split("\n")
@@ -197,7 +210,10 @@ class OccludedOutline:
                 denom += 0.2
         for i in range(len(self.outline)):
             if type(self.outline[i]) == Occlusion:
-                if smart_dropout:
+                if self.outline[i].answer.lower() in avoid_words and dropout_rate < 1:
+                    # TODO change this to a more general way to avoid easy words
+                    self.outline[i].use_as_blank = False
+                elif smart_dropout:
                     # get the lowest word_mapping value of the words in the occlusion
                     lowest_word_mapping = 1/2
                     for word in self.outline[i].answer.split(" "):
@@ -272,7 +288,10 @@ def deserialize_outline(outline, dropout_rate):
     :param outline: dict, the serialized outline.
     :return: OccludedOutline, the deserialized outline.
     """
-    new_outline = OccludedOutline(outline["input_file"])
+    try:
+    	new_outline = OccludedOutline(outline["input_file"])
+    except:
+    	return None, "File not found, starting over."
     # check if filehash matches. Otherwise the outline is outdated and should be regenerated
     if new_outline.filehash != outline["filehash"]:
         new_outline = generate_initial_outline(outline["input_file"], dropout_rate)
@@ -319,7 +338,11 @@ def calculate_new_dropout_rate(dropout_rate, num_attempts, num_skipped, num_blan
     """
     if num_blanks == 0:
         num_blanks = 1
-    denominator = (num_attempts + num_skipped * num_attempts / (num_blanks - num_skipped) + num_hints)
+    denom_denom = num_blanks - num_skipped
+    if denom_denom == 0:
+        denominator = 0
+    else:
+        denominator = (num_attempts + num_skipped * num_attempts / (num_blanks - num_skipped) + num_hints)
     breakeven_point = 1 - 1/math.e
     if denominator == 0:
         overall_score = breakeven_point
