@@ -33,7 +33,9 @@ all words `word` with `{{word}}`.
 
 ### Examples
 
-Example provided: `gospel.txt`
+Examples provided: `gospel.txt`, `mohl-1.txt`, `mohl-intro.txt`
+
+Use by running `python test.py` in the console, or for a local server, run `python app.py`
 
 ## Additional features
 
