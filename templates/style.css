@@ -1,0 +1,6 @@
+.code {
+    white-space: pre;
+
+    /* If you want to use a monospace font like <pre> does by default */
+    font-family: monospace;
+}
