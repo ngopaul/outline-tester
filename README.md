@@ -37,7 +37,7 @@ all words `word` with `{{word}}`.
 
 ### Examples
 
-Examples provided: `gospel.txt` in `templates/`
+Examples provided: `gospel.txt` in `outlines/`. 
 
 Use by running `python test.py` in the console, or for a local server, run `python app.py`
 
@@ -51,3 +51,4 @@ all the lines within when generating the test.
 
 1. Handle different terminal sizes and text with many 
 lines (beyond the terminal height)
+2. `templates/` is TODO.
