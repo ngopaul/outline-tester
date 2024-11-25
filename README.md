@@ -1,10 +1,11 @@
 # outline-tester
 
 This repository contains a python script, `test.py`, which 
-can be used to help memorize long-form text.
+can be used to help memorize long-form text. This runs in 
+the command-line.
 
 Using `app.py` will start a local server that does the same 
-thing.
+thing. This runs in your browser.
 
 By placing `.txt` files in the local directory, and running
 `python test.py`, the script will be able to read the files
