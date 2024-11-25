@@ -3,6 +3,9 @@
 This repository contains a python script, `test.py`, which 
 can be used to help memorize long-form text.
 
+Using `app.py` will start a local server that does the same 
+thing.
+
 By placing `.txt` files in the local directory, and running
 `python test.py`, the script will be able to read the files
 and test the user on them by displaying blanks.
