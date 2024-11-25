@@ -108,7 +108,7 @@ def get_outline_testing_links():
     possible_files = session["possible_files"]
     output = ""
     for file in possible_files:
-        output += f"<a href='javascript:submit_form_with_data(\"{file}\")'>{file}</a>, "
+        output += f"<a href='javascript:submit_form_with_data(\"{file}\")'>{file}</a>, \n"
     return output[:-2]
 
 
@@ -151,7 +151,7 @@ def get_displayed_text():
     # output += session['current_state'] + "\n"
     if session['current_state'] == "CHOOSING_OUTLINE":
         # if currently validating outline, or currently validating difficulty on page load
-        output += "<h3>Welcome to the FTTA Memorization Practice Tool!</h3>" + "\n"
+        output += "<h3>Welcome to the Memorization Practice Tool!</h3>" + "\n"
         output += "For longer outlines, it is recommended that you first <b>study/PSRP the material before</b> using this tool." + "\n"
         output += "There are 10 difficulties, 1 being the easiest and 10 being the hardest." + "\n"
         output += "(by the way, 0 means no blanks and 1000 means all blanks)" + "\n\n"
@@ -159,7 +159,7 @@ def get_displayed_text():
         output += "This tool works best on a laptop with a keyboard. It is easier to read at zoom = 150%. " + "\n\n"
         output += "Type/click an outline to study:" + "\n"
         # output += "Possible outlines: " + ", ".join(session['possible_files']) + "\n"
-        output += "Possible outlines: " + get_outline_testing_links() + "\n"
+        output += "Possible outlines: \n" + get_outline_testing_links() + "\n"
     elif session['current_state'] == "CHOOSING_DIFFICULTY":
         output += (f"Selected {session['current_outline']}. Enter/click desired difficulty (1-10)\n" +
                    get_difficulty_testing_links() + "\n")
@@ -192,7 +192,7 @@ def get_displayed_text():
         output += f"New suggested difficulty: {int(suggested_dropout_rate * 10)}" + "\n"
         session['current_state'] = "CHOOSING_OUTLINE"
         output += "Type/click an outline to study:" + "\n"
-        output += "Possible outlines: " + get_outline_testing_links() + "\n"
+        output += "Possible outlines: \n" + get_outline_testing_links() + "\n"
         output += "Or retry with difficulty: " + "\n"
         output += "Difficulty: " + get_retry_difficulty_links() + "\n"
 

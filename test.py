@@ -29,7 +29,7 @@ class Occlusion:
             adder = 1
             inc_adder_counter = 0
             while not all(words_completed):
-                self.hints.append(" ".join([s[:idx] for s in self.words_in_answer]))
+                self.hints.append(" ".join([s[:idx] + "_" * (len(s)-idx) for s in self.words_in_answer]))
                 words_completed = [idx >= len(s) for s in self.words_in_answer]
                 idx += adder
                 if inc_adder_counter:
@@ -106,7 +106,7 @@ class Occlusion:
                 length_of_hint = len(self.hints[self.hint_counter])
                 num_blanks = (len(self.answer) - length_of_hint)//2
                 num_blanks = max(1, num_blanks)
-                return '_' * num_blanks + self.hints[self.hint_counter] + '_' * num_blanks + (word_hint_helper if with_number_of_words else "")
+                return self.hints[self.hint_counter] + (word_hint_helper if with_number_of_words else "")
                 # return '_' + self.hints[self.hint_counter] + '_' + (word_hint_helper if with_number_of_words else "")
 
 
@@ -176,7 +176,20 @@ class OccludedOutline:
 
         self.outline = []
         ## split the outline where there are occlusions
-        split_1 = raw_outline.split('{{')
+        # force spaces after new lines to be viewable
+        split_by_newlines = raw_outline.split('\n')
+        for i in range(len(split_by_newlines)):
+            # replace the first few spaces in each line with &nbsp;, but not the spaces in the middle of the outline
+            j = 0
+            is_space = True
+            while j < len(split_by_newlines[i]) and is_space:
+                if split_by_newlines[i][j] == ' ':
+                    split_by_newlines[i] = split_by_newlines[i][:j] + '&nbsp;' + split_by_newlines[i][j+1:]
+                else:
+                    is_space = False
+                j += 1
+        force_spaced_outline = '\n'.join(split_by_newlines)
+        split_1 = force_spaced_outline.split('{{')
         for i in range(len(split_1)):
             split_2 = split_1[i].split('}}')
             if len(split_2) == 1:
@@ -445,6 +458,25 @@ def test_outline(input_file, dropout_rate):
           (" (probably ignore this - exited early)" if exited_early else ""))
 
 
+def custom_key(name):
+    # Extract all parts of the string
+    parts = re.split(r'(\d+)', name)
+
+    # Convert numeric parts to integers and keep string parts as is
+    key = []
+    for part in parts:
+        if part.isdigit():
+            key.append(int(part))
+        else:
+            key.append(part)
+
+    return key
+
+
+def sort_names(names):
+    return sorted(names, key=lambda name: (len(custom_key(name)), custom_key(name)))
+
+
 def main_loop():
     print("Started outline tester in directory: " + os.getcwd(), ", file " + __file__)
     while True:
@@ -453,7 +485,7 @@ def main_loop():
             map(lambda f: f[:-4],
                 filter(lambda f: os.path.isfile(f) and f.endswith(".txt") and f not in ignore_files,
                        possible_files)))
-        possible_files.sort()
+        possible_files = sort_names(possible_files)
         print("Type an outline to study:")
         print("Possible outlines: " + ", ".join(possible_files))
         outline_name = input("> ")
